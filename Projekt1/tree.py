@@ -5,12 +5,15 @@ import copy
 def build_tree(data, margin='', poprzedni=-1):
     rows = len(data)
     columns = len(data[0])
+    data_t = [list(i) for i in zip(*data)]
     #print(data)
 
     # Oblicz 1) wystąpienia, 2) prawdopodobieństwa, 3) entropię, 4) f. informacji, 5) przyrost,
     #
-    occurances = count_occur(rows, columns, data)
+    #occurances = count_occur(rows, columns, data)
+    occurances = [(dict((data[j][i], data_t[i].count(data[j][i])) for j in range(len(data)))) for i in range(columns)]
     #print(occurances)
+    #probabilities = occur_prob(rows, columns, copy.deepcopy(occurances))
     probabilities = occur_prob(rows, columns, copy.deepcopy(occurances))
 
     #print(probabilities)
@@ -43,12 +46,12 @@ def build_tree(data, margin='', poprzedni=-1):
         if poprzedni != -1:
             print(f'{margin}:{list(occurances[poprzedni].keys())[0]} A{w_index + 1}')
         else:
-    
             print(f'{margin}A{w_index + 1}')
+
         poprzedni = w_index
         margin += '\t'
         new_data = [[a1 for a1 in data if a1[w_index] == key] for key in occurances[w_index]]
-        # print(new_data)
+        #print(new_data)
         for lisc in new_data:
             # print('----')
             build_tree(lisc, margin, poprzedni)
