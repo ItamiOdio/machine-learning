@@ -1,19 +1,17 @@
 from calc_values import count_occur, occur_prob
-from functions import calc_entropy, calc_info_main, calc_gain, clac_gain_ratio
+from info import calc_entropy, calc_info_main
+from gain import calc_gain, clac_gain_ratio
 import copy
 
-def build_tree(data, margin='', poprzedni=-1):
+def build_tree(data, margin='', prev=-1):
     rows = len(data)
     columns = len(data[0])
     data_t = [list(i) for i in zip(*data)]
     #print(data)
 
     # Oblicz 1) wystąpienia, 2) prawdopodobieństwa, 3) entropię, 4) f. informacji, 5) przyrost,
-    #
-    #occurances = count_occur(rows, columns, data)
-    occurances = [(dict((data[j][i], data_t[i].count(data[j][i])) for j in range(len(data)))) for i in range(columns)]
+    occurances = count_occur(rows, columns, data)
     #print(occurances)
-    #probabilities = occur_prob(rows, columns, copy.deepcopy(occurances))
     probabilities = occur_prob(rows, columns, copy.deepcopy(occurances))
 
     #print(probabilities)
@@ -33,28 +31,31 @@ def build_tree(data, margin='', poprzedni=-1):
     gain_ratio = [clac_gain_ratio(gain[i],split_info[i]) for i in range(len(gain))]
     #print(gain_ratio)
 
-    ratio_indexes = [i for i in range(len(gain_ratio)) if gain_ratio[i] == max(gain_ratio)]
-    #print(ratio_indexes)
+    max_gain_ratio = max(gain_ratio)
+    index_max_gain_ratio = gain_ratio.index(max_gain_ratio)
 
-    w_index = 0
-    for w in ratio_indexes:
-        if w != poprzedni:
-            w_index = w
-            break
-    
-    if max(gain_ratio) > 0:
-        if poprzedni != -1:
-            print(f'{margin}:{list(occurances[poprzedni].keys())[0]} A{w_index + 1}')
+    # Warunek stopu
+    if max_gain_ratio > 0:
+
+        # Wypisz dla liści
+        if prev != -1:
+            print(f'{margin}{list(occurances[prev].keys())[0]} -> Atrybut: {index_max_gain_ratio + 1}')
+
+        # Wypisz dla korzenia
         else:
-            print(f'{margin}A{w_index + 1}')
+            print(f'{margin}Atrybut: {index_max_gain_ratio + 1}')
 
-        poprzedni = w_index
+        # Przygotuj dane do rozgałęzienia
+        prev = index_max_gain_ratio
         margin += '\t'
-        new_data = [[a1 for a1 in data if a1[w_index] == key] for key in occurances[w_index]]
+        new_data = [[x for x in data if x[index_max_gain_ratio] == key] for key in occurances[index_max_gain_ratio]]
         #print(new_data)
-        for lisc in new_data:
-            # print('----')
-            build_tree(lisc, margin, poprzedni)
+
+
+        for x in new_data:
+            build_tree(x, margin, prev)
+            
+    #Decyzja
     else:
-        print(f'{margin}:{list(occurances[poprzedni].keys())[0]} -> {list(occurances[columns - 1].keys())[0]}')
+        print(f'{margin}{list(occurances[prev].keys())[0]} -> D: {list(occurances[columns - 1].keys())[0]}')
 
