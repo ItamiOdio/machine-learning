@@ -6,7 +6,6 @@ import copy
 def build_tree(data, margin='', prev=-1):
     rows = len(data)
     columns = len(data[0])
-    data_t = [list(i) for i in zip(*data)]
     #print(data)
 
     # Oblicz 1) wystąpienia, 2) prawdopodobieństwa, 3) entropię, 4) f. informacji, 5) przyrost,
@@ -49,8 +48,6 @@ def build_tree(data, margin='', prev=-1):
         prev = index_max_gain_ratio
         margin += '\t'
         new_data = [[x for x in data if x[index_max_gain_ratio] == key] for key in occurances[index_max_gain_ratio]]
-        #print(new_data)
-
 
         for x in new_data:
             build_tree(x, margin, prev)
