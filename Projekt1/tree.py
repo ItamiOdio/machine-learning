@@ -47,8 +47,11 @@ def build_tree(data, margin='', prev=-1):
         # Przygotuj dane do rozgałęzienia
         prev = index_max_gain_ratio
         margin += '\t'
+
+        # Stwórz nowy zbiór danych atrybutu z najwyższą wartością gain ratio 
         new_data = [[x for x in data if x[index_max_gain_ratio] == key] for key in occurances[index_max_gain_ratio]]
 
+        # Uruchom budowę dalszej części drzewa dla nowych danych
         for x in new_data:
             build_tree(x, margin, prev)
             

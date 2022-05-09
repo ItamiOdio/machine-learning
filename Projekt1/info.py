@@ -25,7 +25,6 @@ def find_attributes(data, key_list, index):
 
 # Oblicz funkcję informacji dla jednej kolumny
 def calc_info(attr_indexes, data, prob_count, ind):
-    info = 0
     probs_temp = []
     decision_temp = []
     for k in prob_count[ind]:
